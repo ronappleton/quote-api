@@ -1,66 +1,73 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Avrillo Conveyancing Technical Test
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Introduction
 
-## About Laravel
+This repository contains the code for the Avrillo Conveyancing Technical Test.
+The test is to create a simple quote API that returns Kanye West quotes utilising the [Kanye Rest API](https://kanye.rest/).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Setup
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Testing
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Changelog
 
-## Learning Laravel
+- 2021-08-16 - Initial Framework Commit
+- 2021-08-16 - Update the readme.md file to reflect the test.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Methodology
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### kanye.rest API
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+On investigation of the kanye.rest API, it was found that the API returns a single quote in a JSON format.
+The API is a simple GET request to the endpoint https://api.kanye.rest. The API returns a single quote in the following format:
 
-## Laravel Sponsors
+```json
+{
+    "quote": "I feel like I'm too busy writing history to read it."
+}
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+The requirements of the test is to create a simple quote API that returns Kanye West quotes.
+The API should return 5 random quotes, and should be refresh-able to return 5 more random quotes.
 
-### Premium Partners
+This poses an initial problem as the kanye.rest service only returns a single quote per request.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+To account for this problem I will create a command that may be ran initially on application setup
+to populate a database with quotes from the kanye.rest API. This will allow the API to return 5 random quotes
+The command would also be able to be scheduled to run at a set interval to keep the database up to date with new quotes.
 
-## Contributing
+The API must be able to refresh the returned 5 random quotes, this is simply the function of the endpoint for getting quotes
+so will be considered the refresh function.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+The use of cache is allowed in this test, so I will utilise the cache to store the quotes returned from the database to
+allow for faster retrieval of the quotes.
 
-## Code of Conduct
+### Authentication
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The test requires that the API is secured with authentication without using a package.
 
-## Security Vulnerabilities
+The API will be secured with a simple API token.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+For this I will add a command to the application that will allow the creation of API tokens. The command will generate
+a random token and store it in the database. The tokens will be encrypted when stored in the database.
 
-## License
+A Middleware will be used to check the API token on each request to the API. The Middleware will check the token against
+the database and allow the request to continue if the token is valid. Otherwise the request will be rejected with a 401
+response.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+For simplicity, I will use uuid's for the tokens, and accept the token as a query parameter on the request.
+
+### API Client
+
+The test details that the use of Laravel's Manager Pattern is a plus, so I will utilise this pattern when creating
+the API Client. This will allow extensibility of the API Client to allow for the use of other API's in the future.
+
+### Testing
+
+The test details the usage of feature tests, so I will create feature tests for the API endpoint.
+The test details that unit tests are a nice to have, so I will create unit tests for the API Client
+and Manager Pattern and the authentication middleware.
+
+I will commence the build by writing those tests first, and then writing the code to pass the tests.
+
+
