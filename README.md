@@ -95,7 +95,7 @@ and Manager Pattern and extend the endpoint test to test the authentication midd
 
 I will commence the build by writing those tests first, and then writing the code to pass the tests.
 
-#### Notes
+## Notes
 
 I have added strict type declarations to files that I have touched and used type hinting where possible, along with
 return type declarations. I have also added doc blocks to functions and classes where I have felt it necessary.
