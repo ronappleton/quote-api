@@ -5,14 +5,42 @@
 This repository contains the code for the Avrillo Conveyancing Technical Test.
 The test is to create a simple quote API that returns Kanye West quotes utilising the [Kanye Rest API](https://kanye.rest/).
 
-## Setup
+## Installation and Setup
+
+To install the project please run the following commands in a directory of your choice:
+
+```bash
+composer create-project --stability=dev ronappleton/quote-api quote-api
+
+cd quote-api
+
+vendor/bin/sail up -d
+```
+
+Once sail has finished building the containers, run the following command to migrate the database:
+
+```bash
+vendor/bin/sail artisan migrate
+```
+
+Once the database has been migrated, run the following command to populate the database with quotes:
+
+```bash
+vendor/bin/sail artisan quotes:cache
+```
+
+You may then access the API at http://localhost/api/quotes?api_token=1234567890
+
+The API token is set in the .env file and is set to 1234567890 by default.
+You can also set the API token in the .env file to any value of your choice.
 
 ## Testing
 
-## Changelog
+In order to run the tests, run the following command after building the containers:
 
-- 2021-08-16 - Initial Framework Commit
-- 2021-08-16 - Update the readme.md file to reflect the test.
+```bash
+vendor/bin/sail artisan test
+```
 
 ## Methodology
 
@@ -48,14 +76,11 @@ The test requires that the API is secured with authentication without using a pa
 
 The API will be secured with a simple API token.
 
-For this I will add a command to the application that will allow the creation of API tokens. The command will generate
-a random token and store it in the database. The tokens will be encrypted when stored in the database.
+For this I will add an API_TOKEN to the env file and use in the auth config file.
 
 A Middleware will be used to check the API token on each request to the API. The Middleware will check the token against
-the database and allow the request to continue if the token is valid. Otherwise the request will be rejected with a 401
+the config and allow the request to continue if the token is valid. Otherwise the request will be rejected with a 401
 response.
-
-For simplicity, I will use uuid's for the tokens, and accept the token as a query parameter on the request.
 
 ### API Client
 
@@ -66,8 +91,6 @@ the API Client. This will allow extensibility of the API Client to allow for the
 
 The test details the usage of feature tests, so I will create feature tests for the API endpoint.
 The test details that unit tests are a nice to have, so I will create unit tests for the API Client
-and Manager Pattern and the authentication middleware.
+and Manager Pattern and extend the endpoint test to test the authentication middleware.
 
 I will commence the build by writing those tests first, and then writing the code to pass the tests.
-
-
